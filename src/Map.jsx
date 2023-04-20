@@ -22,7 +22,7 @@ const Map = () => {
         loadMarkers();
 
         return () => {
-            
+            map.remove();
         }
 
     }, [])
