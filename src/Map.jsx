@@ -14,6 +14,9 @@ const Map = () => {
     const [search, setSearch] = useState(null);
     
     const provider = new OpenStreetMapProvider();
+    const searchControl = new GeoSearchControl({
+        provider: provider,
+    });
 
     let map = useRef();
 
@@ -22,7 +25,7 @@ const Map = () => {
         loadMarkers();
 
         return () => {
-            map.remove();
+            map.current.remove();
         }
 
     }, [])
@@ -33,26 +36,24 @@ const Map = () => {
 
     const loadMap = (lat, lng) => {
         //console.log(`${lat} ${lng}`);
-        const searchControl = new GeoSearchControl({
-            provider: provider,
-        });
+        
 
-        map = L.map('map', {
+        map.current = L.map('map', {
             center: [lat, lng],
             zoom: 16
         })
 
-        map.addControl(searchControl);
+        //map.addControl(searchControl);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        }).addTo(map.current);
 
     }
 
     const loadMarkers = () => {
         markers.map(({ lat, lng }) => {
-            L.marker([lat, lng]).addTo(map)
+            L.marker([lat, lng]).addTo(map.current)
         })
     }
 
@@ -76,7 +77,8 @@ const Map = () => {
                     </ul>
                 ) 
             }
-            <div id="map" ref={t => map = t}></div>
+            <div id="map" ref={el => map => el }></div>
+            <button onClick={() => setMarkers(currentMarkers => currentMarkers.concat({ lat: -33.40044042873335, lng: -70.58958580936282}))}>Añadir Marker</button>
         </>
     )
 }
